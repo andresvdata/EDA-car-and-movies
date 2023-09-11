@@ -1,0 +1,215 @@
+---
+title: "Assigment2"
+author: "Andres Viloria"
+date: "2022-10-29"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+# read file 
+```{r}
+auto <- read.csv('car.csv')
+```
+
+
+```{r}
+summary(auto)
+```
+
+```{r}
+auto$buying<-as.factor(auto$buying)
+auto$maint<-as.factor(auto$maint)
+auto$doors<-as.numeric(auto$doors)
+auto$persons<-as.numeric(auto$persons)
+auto$lug_boot<-as.factor(auto$lug_boot)
+auto$safety<-as.factor(auto$safety)
+auto$car_accept<-as.factor(auto$car_accept)
+```
+
+
+
+```{r}
+summary(auto)
+```
+
+```{r}
+auto_freq<-table(auto$lug_boot,auto$car_accept)
+```
+
+
+### condicional percentage my way
+```{r}
+
+percentage_auto_freq<-rbind(auto_freq[,'acc']/sum(auto_freq[,'acc']),auto_freq[,'good']/sum(auto_freq[,'good']),auto_freq[,'unacc']/sum(auto_freq[,'unacc']),auto_freq[,'vgood']/sum(auto_freq[,'vgood']))
+#percentage_auto_freq
+
+
+percentage_auto_freq<-t(percentage_auto_freq*100)
+
+
+colnames(percentage_auto_freq)<-(colnames(auto_freq))
+percentage_auto_freq
+
+```
+
+### condicional percentage teacher way
+```{r}
+cond_percent <- function(X) X/sum(X)*100
+percentage_auto_freq<-apply(auto_freq, 2,cond_percent )
+percentage_auto_freq
+```
+
+
+
+```{r}
+library(RColorBrewer)
+
+coul <- brewer.pal(5, "Set2") 
+par(mfrow=c(1,2))
+
+#barplot(t(auto_freq),legend.text = TRUE,xlab = 'Lug Boot', ylab = 'Frecuency' ,main = 'Luggage Boot by Car Accept', #col=coul ,beside = TRUE)
+
+barplot(auto_freq,xlab = 'Car Accept', ylab = 'Frecuency',main = 'Car Accept by Luggage Boot' ,beside = TRUE,legend.text=c('big','med','small'),col=c('lightblue','pink','lightgreen'))
+
+
+
+```
+
+```{r}
+auto_freq
+chisq.test(auto_freq)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Movies
+
+
+```{r}
+movies <- read.csv('movies.csv')
+```
+
+
+```{r}
+summary(movies)
+```
+
+
+
+```{r}
+movies$LeadStudio<-as.factor(movies$LeadStudio)
+movies$RottenTomatoes<-as.numeric(movies$RottenTomatoes)
+movies$AudienceScore<-as.numeric(movies$AudienceScore)
+movies$Story<-as.factor(movies$Story)
+movies$Genre<-as.factor(movies$Genre)
+movies$TheatersOpenWeek<-as.numeric(movies$TheatersOpenWeek)
+movies$OpeningWeekend<-as.numeric(movies$OpeningWeekend)
+movies$BOAvgOpenWeekend<-as.numeric(movies$BOAvgOpenWeekend)
+movies$DomesticGross<-as.numeric(movies$DomesticGross)
+movies$ForeignGross<-as.numeric(movies$ForeignGross)
+movies$WorldGross<-as.numeric(movies$WorldGross)
+movies$Budget<-as.numeric(movies$Budget)
+movies$Profitability<-as.numeric(movies$Profitability)
+movies$OpenProfit<-as.numeric(movies$OpenProfit)
+movies$Year<-as.factor(movies$Year)
+```
+
+
+
+
+```{r}
+plot(movies$RottenTomatoes, movies$AudienceScore)
+```
+
+
+
+```{r}
+cor(movies$AudienceScore, movies$RottenTomatoes)
+```
+
+```{r}
+model<- lm(movies$AudienceScore ~ movies$RottenTomatoes)
+model
+```
+
+```{r}
+plot(movies$RottenTomatoes, movies$AudienceScore)
+abline(model)
+```
+
+```{r}
+library(MASS)
+residual=resid(model) ## Obtain residuals
+stu.residual =studres(model) ## Obtain Studentized residuals
+## Studentized residual plot
+plot(movies$RottenTomatoes, stu.residual ,main="Studentized Residual Plot",xlab = 'Rotten Tomatoes',ylab = 'Residual')
+## Add different horizontal line.
+abline(h=c(-2,0,2), col=c("red", "blue", "red"), lty=c(2,1,2), lwd=c(3,2,3))
+abline(h=0)
+## histogram of studentized residual
+hist(stu.residual )
+```
+
+
+
+### ERTL COMPANY
+
+```{r}
+A<-c(15,15,20)
+B<-c(13,11,25)
+C<-c(21,13,12)
+company<-data.frame(A,B,C)
+company_total<-company
+
+```
+
+
+# add total by column
+```{r}
+l<-function(x) sum(x)
+company_total<-rbind(company, apply(company, 2,l))
+row.names(company_total)<-c('Minor Defect','Major Defect','Good','Total')
+company_total
+```
+
+# add total by row
+```{r}
+l<-function(x) sum(x)
+company_total<-cbind(company_total, apply(company_total, 1,l))
+colnames(company_total)<-c('A','B','C','Total')
+company_total
+```
+
+
+
+```{r}
+Total<-apply(company, 1, function(x) sum(x))
+company_total<-cbind(company,Total)
+total<-company_total[,'Total']
+total/sum(total)*100
+#total
+```
+
+```{r}
+
+row.names(company)<-c('Minor Defect','Major Defect','Good')
+company
+chisq.test(company) # Chi-square Test
+```
+
+
+
