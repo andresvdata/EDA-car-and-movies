@@ -1,2 +1,6 @@
 # EDA-car-and-movies
-Two datasets are being processed by using R.
+This project explores two datasets : 
+* Car Evaluation 
+* Hollywood movies.  
+
+The purpose is throught EDA get insigts from this dataset.
