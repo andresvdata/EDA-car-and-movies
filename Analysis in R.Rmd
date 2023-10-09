@@ -1,5 +1,5 @@
 ---
-title: "Assigment2"
+title: "Analysis in R"
 author: "Andres Viloria"
 date: "2022-10-29"
 output:
